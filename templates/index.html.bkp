@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple AI Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #chat-container { max-width: 600px; margin: auto; }
+        .chat-bubble { padding: 10px; margin: 5px; border-radius: 10px; }
+        .user { background-color: #d1e7dd; text-align: right; }
+        .bot { background-color: #f8d7da; text-align: left; }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <form id="chat-form">
+            <input type="text" id="message" placeholder="Type your message" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+      <script>
+    document.getElementById("chat-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const userMessage = document.getElementById("message").value;
+        document.getElementById("chat-box").innerHTML += `<div class="chat-bubble user">${userMessage}</div>`;
+        document.getElementById("message").value = "";
+
+        try {
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userMessage }) // Correctly send the 'message' key
+            });
+
+            const data = await response.json();
+            document.getElementById("chat-box").innerHTML += `<div class="chat-bubble bot">${data.reply}</div>`;
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    });
+</script>
+</body>
+</html>
+
